@@ -1,0 +1,5 @@
+(define (read-binary-file)
+  (let ((current-byte (read-byte)))
+    (if (equal? #!eof current-byte)
+        '()
+          (cons current-byte (read-binary-file)))))

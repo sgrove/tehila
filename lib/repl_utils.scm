@@ -1,0 +1,5 @@
+(define return)
+(define (returnable-repl)
+  (call/cc (lambda (k)
+             (set! return (lambda () (k #f)))
+             (repl))))

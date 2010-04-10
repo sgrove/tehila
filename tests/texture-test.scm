@@ -1,0 +1,171 @@
+(require-extension lolevel)
+(require-extension gl)
+(require-extension glu)
+(require-extension glut)
+(require-extension srfi-4)
+
+(set! *cube-debugger* 1)
+
+(load "math_utils.scm")
+(load "list_utils.scm")
+(load "binary_utils.scm")
+(load "image_utils.scm")
+(load "gl_utils.scm")
+(load "texture_utils.scm")
+
+(load "repl_utils.scm")
+;(load "gl_debug_utils.scm")
+
+(load "keyboard.scm")
+(load "camera.scm")
+(load "iso_camera.scm")
+
+(load "game.scm")
+
+(set! *start-time* (current-milliseconds))
+(set! *last-frame* (current-milliseconds))
+(set! *texture-count* 0)
+(set! *texture-files* '("rpg-char-4.bmp" "rpg-char-4-2.bmp" "grid.bmp" "tree.bmp" "corner_test.bmp" "grass.bmp"))
+;(set! *texture-files* '("rpg-char-4.bmp" "rpg-char-4-2.bmp" "grid.bmp" "tree.bmp" "corner_test.bmp"))
+;(set! *texture-files* '("corner_test.bmp" "corner_test.bmp" "corner_test.bmp" "corner_test.bmp" "corner_test.bmp"))
+
+(define texture-handles (make-u32vector (length *texture-files*)))
+
+;; (define (draw-floor new-matrix?)
+;;   (if new-matrix? (gl:PushMatrix))
+;;   (textured-quad (u32vector-ref texture-handles 5)
+;;                  (vertex -100 -5  100)
+;;                  (vertex  100 -5  100)
+;;                  (vertex  100 -5 -100)
+;;                  (vertex -100 -5 -100)
+;;                  25 25)
+;;   (if new-matrix? (gl:PopMatrix)))
+
+(define (textured-triangle-example delta)
+  (let* ((total-time (- (current-milliseconds) *start-time*))
+         (seconds (/ (inexact->exact (truncate total-time)) 1000))
+         (current-texture (inexact->exact (truncate (remainder seconds 2)))))
+    ;(print seconds)
+    ;(print current-texture)
+    ;(print delta)
+    ;(move-camera-forward (- 0.1))
+    (update-camera delta)
+    (adjust-for-camera)
+    ;(camera-debug print)
+
+      ;; (do ((x -20.0 (+ x 1)))  ((> x 20))
+      ;;   (do ((z -2.0 (+ z 1))) ((> z 2))
+      ;;     (with-new-matrix
+      ;;      (textured-quad  (u32vector-ref texture-handles 2)
+      ;;                      (vertex x -0.5 z)
+      ;;                      (vertex (+ x 1) -0.5  z)
+      ;;                      (vertex (+ x 1) -0.5 (- z 1))
+      ;;                      (vertex x -0.5 (- z 1))))))
+
+    (draw-floor)
+
+    (with-new-matrix
+       
+     (flat-triangle (color 0.25 0.5 0.75)
+                    (vertex -1 1 -2)
+                    (vertex 1 1 -2)
+                    (vertex 1 0 -2)))
+))
+    ;; (draw-trees)
+    ;; (draw-characters)))
+
+
+
+(define (init)
+  (gl:ShadeModel gl:SMOOTH)
+  (gl:ClearColor 1.0 1.0 1.0 0.0)
+  (gl:ClearDepth 1.0)
+  (gl:Enable gl:DEPTH_TEST)
+  (gl:DepthFunc gl:LEQUAL)
+  ;(gl:Enable gl:BLEND)
+  ;(gl:BlendFunc gl:SRC_ALPHA gl:ONE_MINUS_SRC_ALPHA)
+  (gl:Hint gl:PERSPECTIVE_CORRECTION_HINT gl:NICEST)
+  (load-textures *texture-files* 'bmp))
+
+(define (display)
+  (gl:Clear (+ gl:COLOR_BUFFER_BIT gl:DEPTH_BUFFER_BIT))
+  (gl:MatrixMode gl:MODELVIEW)
+  (gl:LoadIdentity)
+  (let ((delta (/ (- *last-frame* (current-milliseconds)) 100)))
+    (textured-triangle-example (/ delta 4))
+    (gl:Flush))
+  (set! *last-frame* (current-milliseconds)))
+
+(define (reshape width height)
+  (gl:Viewport 0 0 width height)
+  (gl:MatrixMode gl:PROJECTION)
+  (gl:LoadIdentity)
+  (glu:Perspective 60.0 (/ width height) 1.0 300.0)
+  (gl:MatrixMode gl:MODELVIEW)
+  (gl:LoadIdentity))
+
+(define (act-on-keyboard-state delta-loop)
+  (let* ((delta (+ (- (current-milliseconds) *last-frame*) 1))
+         (turn-sensitivity  (* 1.0 delta))
+         (move-sensitivity (* 0.01 delta))
+         (walk-length (* 0.5 delta)))
+    (print delta)
+    ;; (if (kb:key-pressed? glut:KEY_LEFT)  (turn-camera (vertex (- turn-sensitivity) 0 0)))
+    ;; (if (kb:key-pressed? glut:KEY_RIGHT) (turn-camera (vertex turn-sensitivity 0 0)))
+    ;; (if (kb:key-pressed? glut:KEY_UP)    (move-camera-forward walk-length))
+    ;; (if (kb:key-pressed? glut:KEY_DOWN)  (move-camera-forward (- walk-length)))
+
+    (if (kb:key-pressed? glut:KEY_LEFT)  (iso-move-camera (vertex 1 0 0)))
+    (if (kb:key-pressed? glut:KEY_RIGHT) (iso-move-camera (vertex -1 0 0)))
+    (if (kb:key-pressed? glut:KEY_UP)    (iso-move-camera (vertex 0 0 1)))
+    (if (kb:key-pressed? glut:KEY_DOWN)  (iso-move-camera (vertex 0 0 -1)))
+
+    (if (kb:key-pressed? #\q)  (iso-turn-camera (vertex 0 1 0)))
+    (if (kb:key-pressed? #\e)  (iso-turn-camera (vertex 0 -1 0)))
+
+
+    (if (kb:key-pressed? #\a)  (strafe-camera (vertex walk-length 0 0)))
+    (if (kb:key-pressed? #\d)  (strafe-camera (vertex (- walk-length) 0 0)))
+    (if (kb:key-pressed? #\a)  (strafe-camera (vertex walk-length 0 0)))
+    (if (kb:key-pressed? #\d)  (strafe-camera (vertex (- walk-length) 0 0)))
+    (if (kb:key-pressed? #\w)  (strafe-camera (vertex 0 walk-length 0)))
+    (if (kb:key-pressed? #\s)  (strafe-camera (vertex 0 (- walk-length) 0)))
+    (if (kb:key-pressed? #\z)  (move-camera (vertex 0  walk-length 0)))
+    (if (kb:key-pressed? #\x)  (move-camera (vertex 0 (- walk-length) 0)))
+
+    (if (kb:key-pressed? #\r)  (turn-camera (vertex 0 0 (- turn-sensitivity))))
+    (if (kb:key-pressed? #\f) (turn-camera (vertex 0 0 turn-sensitivity)))
+
+    (if (kb:key-pressed? #\space)  (returnable-repl))))
+  ;(glut:TimerFunc 0 act-on-keyboard-state 0))
+
+(define (render-loop delta)
+  (glut:PostRedisplay)
+  (print "render loop")
+  (act-on-keyboard-state delta)
+  (kb:debug-keyboard-state)
+  (glut:TimerFunc 0 render-loop 0))
+
+(define (main)
+  (glut:InitDisplayMode (+ glut:RGBA glut:DEPTH))
+  (glut:InitWindowSize 640 480)
+  (glut:InitWindowPosition 100 100)
+  (glut:CreateWindow "Schemer's Hope")
+  (init)
+  (glut:DisplayFunc display)
+  (glut:ReshapeFunc reshape)
+
+  (glut:IgnoreKeyRepeat #t)
+  (glut:KeyboardFunc keyboard)
+  (glut:KeyboardUpFunc keyboard-up)
+  (glut:SpecialFunc keyboard)
+  (glut:SpecialUpFunc keyboard-up)
+
+  (glut:TimerFunc 1 render-loop 0)
+  ;(glut:TimerFunc 1 act-on-keyboard-state 0)
+
+  (move-camera (vertex 5 10 5))
+  (turn-camera (vertex 45 225 0))
+  (glut:MainLoop))
+
+(main)

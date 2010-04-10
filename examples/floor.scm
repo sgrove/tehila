@@ -1,0 +1,7 @@
+(define (draw-floor)
+  (textured-quad (u32vector-ref texture-handles 5)
+                 (vertex -100 -5  100)
+                 (vertex  100 -5  100)
+                 (vertex  100 -5 -100)
+                 (vertex -100 -5 -100)
+                 25 25))
