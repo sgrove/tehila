@@ -21,6 +21,9 @@
 (define (vertex-invert vertex)
   (map - vertex))
 
+(define (vertex-truncate vertex #!optional precision)
+  (map (lambda (i) (round-to i 0.01)) vertex))
+
 (define (vertex-add vertex-1 vertex-2)
   (map (lambda (a b) (+ a b)) vertex-1 vertex-2))
 
@@ -148,6 +151,41 @@
                  (vector (+ (/ s 2) x) y 0)
                  (vector x (+ y s) 0)
                  (vector x (+ y s) 0.25)))
+
+(define (flat-quad quad-color
+                   vertex-1
+                   vertex-2
+                   vertex-3
+                   vertex-4)
+
+  (quad quad-color
+        vertex-1
+        quad-color
+        vertex-2
+        quad-color
+        vertex-3
+        quad-color
+        vertex-4))
+
+(define (quad color-1
+              vertex-1
+              color-2
+              vertex-2
+              color-3
+              vertex-3
+              color-4
+              vertex-4)
+  
+  (gl:Begin gl:QUADS)
+  (apply gl:Color3f color-1)
+  (apply gl:Vertex3f vertex-1)
+  (apply gl:Color3f color-2)
+  (apply gl:Vertex3f vertex-2)
+  (apply gl:Color3f color-3)
+  (apply gl:Vertex3f vertex-3)
+  (apply gl:Color3f color-4)
+  (apply gl:Vertex3f vertex-4)
+  (gl:End))
 
 (define (textured-quad texture
                        upper-left

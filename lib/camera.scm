@@ -1,27 +1,31 @@
-(define camera-position (vertex 0 0 0))
-(define camera-velocity (vertex 0 0 0))
-(define camera-angle    (vertex 0 0 0))
-(define camera-rotation (vertex 0 0 0))
-(define camera-orbit-angle  (vertex 0 0 0))
+(define camera-position (vertex 0.0 0.0 0.0))
+(define camera-velocity (vertex 0.0 0.0 0.0))
+(define camera-angle    (vertex 0.0 0.0 0.0))
+(define camera-rotation (vertex 0.0 0.0 0.0))
+(define camera-orbit-angle  (vertex 0.0 0.0 0.0))
 (define camera-orbit-offset 10)
 
 (define (current-camera-position)
   camera-position)
 
+(define (current-camera-angle)
+  camera-angle)
+
 (define (update-camera delta)
   (set! camera-position (map (lambda (a b) (+ a b)) camera-position camera-velocity))
   ;(stop-camera)
-  ;(camera-look-at (vertex 0 0 0))
-  (set! camera-angle    (map (lambda (a b) (print (+ a b)) (if (equal? (inexact->exact (+ a b)) 0) 0 (remainder 360 (+ a b)))) camera-angle camera-rotation))
-  (print (string-append "Position: " (vertex->string camera-position)))
-  (print (string-append "Angle   : " (vertex->string camera-angle)))
-  (print (string-append "Offset  : " (number->string camera-orbit-offset)))
-  (stop-camera)
-  (print "------------------------------------------------------------------------------"))
+  ;(camera-look-at (vertex 0.0 0.0 0.0))
+  (set! camera-angle    (map (lambda (a b) (+ a b)) camera-angle camera-rotation))
+  ;; (print (string-append "Position: " (vertex->string camera-position)))
+  ;; (print (string-append "Angle   : " (vertex->string camera-angle)))
+  ;; (print (string-append "Offset  : " (number->string camera-orbit-offset)))
+  ;; (print "------------------------------------------------------------------------------")
+  (stop-camera))
+
   
 (define (turn-camera rotation)
-  (print "Turning camera!")
-  (print (vertex->string rotation))
+  ;(print "Turning camera!")
+  ;(print (vertex->string rotation))
   (set! camera-rotation (map (lambda (a b) (+ a b)) camera-rotation rotation)))
 
 ;; TODO: Currently 2d. Make it 3d
@@ -82,40 +86,37 @@
          (move-x (* distance (cos (degrees->radians angle-y))))
          (move-z (* distance (sin (degrees->radians angle-y))))
          (movement (vertex move-x 0 move-z)))
-  (print (string-append "Pointing: " (vertex->string camera-angle)))
-  (print (string-append "Angle   : " (number->string (degrees->radians angle-y)) " (" (number->string angle-y) "d)"))
-  (print (string-append "Moving  : " (vertex->string movement)))
-  (print (string-append "Velocity: " (vertex->string (map (lambda (a b) (+ a b)) movement camera-velocity))))
   (move-camera movement)))
 
-(define (strafe-camera distances)
-  (let ((x (vertex-x distances))
-        (y (vertex-y distances))
-        (z (vertex-z distances)))
+(define (strafe-camera distance)
+  (let* ((x (vertex-x distance))
+        (y (vertex-y distance))
+        (z (vertex-z distance))
+        (x-offset (* x (sin (degrees->radians (+ 90 (vertex-y camera-angle))))))
+        (z-offset (* x (cos (degrees->radians (+ 90 (vertex-y camera-angle)))))))
     (move-camera (vertex
-                  (* x (cos (degrees->radians (+ 90 (vertex-y camera-angle)))))
+                  x-offset
                   0
-                  (* x ( (degrees->radians (+ 90 (vertex-y camera-angle)))))))))
-
+                  z-offset))))
 
 (define (stop-camera)
-  (set! camera-velocity (vertex 0 0 0))
-  (set! camera-rotation (vertex 0 0 0)))
+  (set! camera-velocity (vertex 0.0 0.0 0.0))
+  (set! camera-rotation (vertex 0.0 0.0 0.0)))
 
 (define (reset-camera-angle)
-  (set! camera-angle    (vertex 0 0 0))
-  (set! camera-rotation (vertex 0 0 0)))
+  (set! camera-angle    (vertex 0.0 0.0 0.0))
+  (set! camera-rotation (vertex 0.0 0.0 0.0)))
 
 (define (reset-camera-position)
-  (set! camera-position (vertex 0 0 0))
-  (set! camera-velocity (vertex 0 0 0)))
+  (set! camera-position (vertex 0.0 0.0 0.0))
+  (set! camera-velocity (vertex 0.0 0.0 0.0)))
 
 (define (reset-camera)
   (reset-camera-position)
   (reset-camera-angle))
 
 (define (camera-debug debug-function)
-  (let ((orbit-center (get-orbit-center)))
+  (let ((orbit-center (get-orbit-center 10)))
     (map debug-function (list (string-append "POSITION: " (number->string (vertex-x camera-position)) ", " (number->string (vertex-y camera-position)) ", " (number->string (vertex-z camera-position)))
                               (string-append "VELOCITY: " (number->string (vertex-x camera-velocity)) ", " (number->string (vertex-y camera-velocity)) ", " (number->string (vertex-z camera-velocity)))
                               (string-append "ANGLE: "    (number->string (vertex-x camera-angle))    ", " (number->string (vertex-y camera-angle))    ", " (number->string (vertex-z camera-angle)))
@@ -123,11 +124,10 @@
                               (string-append "ORBIT: "    (number->string (vertex-x camera-orbit-angle)) ", " (number->string (vertex-y camera-orbit-angle))    ", " (number->string (vertex-z camera-orbit-angle)))
                               (string-append "O-CENTER: "    (number->string (vertex-x orbit-center))    ", " (number->string (vertex-y orbit-center))    ", " (number->string (vertex-z orbit-center)))))))
 
-(define (get-orbit-center)
-  (let* ((distance 10.0)
-         (angle-y (+ 0 (vertex-y camera-angle)))
-         (move-x (* distance (cos (degrees->radians angle-y))))
-         (move-z (* distance (sin (degrees->radians angle-y)))))
+(define (get-orbit-center distance)
+  (let* ((angle-y (+ 0 (vertex-y camera-angle)))
+         (move-x (* distance (sin (degrees->radians angle-y))))
+         (move-z (- (* distance (cos (degrees->radians angle-y))))))
     (vertex-add camera-position (vertex move-x 0 move-z))))
 
 

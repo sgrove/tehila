@@ -147,7 +147,7 @@
     (if (kb:key-pressed? #\space)  (returnable-repl))))
 
 ;; --- Main loop
-(define (game-looper delta)
+(define (game-loop delta)
   (print "Do something here!")
   (print delta)
   (define (textured-triangle-example delta)

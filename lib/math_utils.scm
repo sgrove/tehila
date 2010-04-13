@@ -8,3 +8,6 @@
 
 (define (^2 b)
   (* b b))
+
+(define (round-to n d)
+  (if (= 0 n) n (/ (round (* n (/ 1.0 d))) (/ 1.0 d))))

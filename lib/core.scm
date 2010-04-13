@@ -41,7 +41,7 @@
 (print "Loading custom logic...")
 
 ;; User's logic
-(load "main.scm")
+(load *logic-file*)
 (print "Scaffolding application...")
 
 (set! *start-time* (current-milliseconds))
@@ -67,8 +67,7 @@
   (gl:MatrixMode gl:MODELVIEW)
   (gl:LoadIdentity)
   (let ((delta (- *last-frame* (current-milliseconds))))
-    (+ 1 1)
-    (game-looper delta))
+    (game-loop delta))
   (gl:Flush)
   (set! *last-frame* (current-milliseconds))
   (post-display-hook))

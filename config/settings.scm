@@ -11,4 +11,4 @@
 
 (define *shade-model* gl:SMOOTH)
 
-(define *texture-files* '("resources/rpg-char-4.bmp" "resources/rpg-char-4-2.bmp" "resources/grid.bmp" "resources/tree.bmp" "resources/corner_test.bmp" "resources/grass.bmp" "resources/water_64x64.bmp" "resources/grass-water_64x64.bmp"))
+(define *texture-files* '("resources/grid.bmp" "resources/corner_test.bmp" "resources/example.bmp"))
