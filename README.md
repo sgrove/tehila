@@ -19,7 +19,11 @@ lolevel
 [srfi-4](http://srfi.schemers.org/srfi-4/srfi-4.html)
 
 Usage
-------------
+-----
 Check out the examples directory, or "csi launcher.scm"
 
-Beware that you will need the bitmap (bmp) files in resources/ currently. They're not there. Another day, perhaps.
+Beware that you will need the bitmap (bmp) files in resources/ currently. There are only a few, but they're there.
+
+Tutorials
+---------
+The [Nehe tutorials](http://nehe.gamedev.net/lesson.asp?index=01) 1-5 have been translated and are in the examples directory. Edit launcher.scm to specify which to open.
