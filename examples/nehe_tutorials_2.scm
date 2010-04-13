@@ -2,10 +2,6 @@
 (define *clear-color* '(0 0 0 0))
 
 (define (game-loop delta)
-  (let* ((total-time (- (current-milliseconds) *start-time*))
-         (seconds (/ (inexact->exact (truncate total-time)) 1000))
-         (current-texture (inexact->exact (truncate (remainder seconds 2)))))
-
     ;; Get a new matrix (same as pushing and popping the matrix)
     (with-new-matrix
 
@@ -27,7 +23,7 @@
                 (vertex  1  1 0)  ;; Top Right
                 (vertex  1 -1 0)  ;; Bottom Right
                 (vertex -1 -1 0)) ;; Bottom Left     
-     )))
+     ))
 
 ;; No keyboard control in this tutorial
 (define (handle-keyboard-state delta)
