@@ -11,8 +11,6 @@
   (nth data 10))
 
 (define (bmp-header data)
-  (print "File data:")
-  (print data)
   (sublist data 0 (bmp-data-offset data)))
 
 (define (bmp-width data)
@@ -62,15 +60,12 @@
     ;; (print (string-append "Offset: " (number->string (bmp-data-offset bmp))))
     ;(print (string-append "Header: " (list->string header)))
     (do ((row 0 (+ row 1))) ((> row (- height 1)) buffer)
-      (print (string-append "New Row: " (number->string row)))
       (do ((column 3 (+ column bpp))) ((> column (* width bpp)))
-        (print (string-append "--- (" (number->string row) ", " (number->string column) ") ---"))
         (let* ((position (+ (* row width bpp) column))
                (red   (vector-ref body (- position 3)))
                (green (vector-ref body (- position 2)))
                (blue  (vector-ref body (- position 1))))
 
-          (print (string-append (number->string counter) "-" (number->string position)))
           (u8vector-set! buffer (+ counter 0) red)
           (u8vector-set! buffer (+ counter 1) green)
           (u8vector-set! buffer (+ counter 2) blue)
@@ -82,7 +77,6 @@
                   (u8vector-set! buffer (+ counter 3) (vector-ref body (- position 0)))))
 
           (u8vector-set! buffer counter (vector-ref body counter))
-          ;(print (string-append (number->string counter) ". [O->N] [" (number->string (vector-ref body counter)) " -> " (number->string (u8vector-ref buffer counter)) "]"))
           (set! counter (+ counter bpp)))))
     buffer))
     ;(flip-bmp-vertically (* width 4) buffer)))    
@@ -90,7 +84,6 @@
 (define (load-textures filenames type)
   (if (equal? type 'bmp)
       (begin
-        (print (gl:GenTextures (length filenames) texture-handles))
         (for-each (lambda (file) (load-texture file *texture-count*) (add1 *texture-count*)) filenames))))
 
 ; works on u8vectors
@@ -100,7 +93,6 @@
          (buffer (make-u8vector data-size 0))
          (height (/ data-size row-width))
          (counter 0))
-    ;; (print (string-append (number->string height) " rows tall"))
     (do ((row (- height 1) (- row 1))) ((equal? row -1) buffer)
       (do ((column 0 (+ column 4))) ((equal? column row-width))
         (let ((position (+ (* row row-width) column)))
@@ -109,8 +101,6 @@
           (u8vector-set! buffer (+ counter 1) (u8vector-ref data (+ position 1)))
           (u8vector-set! buffer (+ counter 2) (u8vector-ref data (+ position 2)))
           (u8vector-set! buffer (+ counter 3) (u8vector-ref data (+ position 3))))
-
-          ;; (print (string-append (number->string (+ (* row row-width) column)) " -> " (number->string counter))))
         (set! counter (+ counter 4))))))
 
 ; works on u8vectors
@@ -120,7 +110,6 @@
          (buffer (make-u8vector data-size 255))
          (height (/ data-size row-width))
          (counter 0))
-    ;(print (string-append (number->string height) " rows tall"))
     (do ((row 0 (+ row 1))) ((equal? row height))
       (do ((column 1 (+ column 4))) ((> column row-width))
         (let ((position (+ (* row row-width) (- row-width column))))
@@ -128,13 +117,7 @@
           (u8vector-set! buffer (+ counter 0) (u8vector-ref data (- position 1)))
           (u8vector-set! buffer (+ counter 1) (u8vector-ref data (- position 2)))
           (u8vector-set! buffer (+ counter 2) (u8vector-ref data (- position 3)))
-          (u8vector-set! buffer (+ counter 3) (u8vector-ref data (- position 0)))
-
-          ;; (print (string-append (number->string (+ counter 0)) " = " (number->string (u8vector-ref data (- position 3))) ", Actual: [" (number->string (u8vector-ref buffer (+ counter 0)))))
-          ;; (print (string-append (number->string (+ counter 1)) " = " (number->string (u8vector-ref data (- position 2))) ", Actual: [" (number->string (u8vector-ref buffer (+ counter 1)))))
-          ;; (print (string-append (number->string (+ counter 2)) " = " (number->string (u8vector-ref data (- position 1))) ", Actual: [" (number->string (u8vector-ref buffer (+ counter 2)))))
-          ;; (print (string-append (number->string (+ counter 3)) " = " (number->string (u8vector-ref data (- position 0))) ", Actual: [" (number->string (u8vector-ref buffer (+ counter 3)))))
-          )
+          (u8vector-set! buffer (+ counter 3) (u8vector-ref data (- position 0))))
         (set! counter (+ counter 4))))
     buffer))
 

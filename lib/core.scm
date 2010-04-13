@@ -91,9 +91,9 @@
   (glut:TimerFunc 0 render-loop 0))
 
 (define (main)
-  (glut:InitDisplayMode (+ glut:DOUBLE glut:RGBA glut:DEPTH))
-  (glut:InitWindowSize (nth *window-resolution* 0) (nth *window-resolution* 1))
-  (glut:InitWindowPosition (nth *window-position* 0) (nth *window-position* 1))
+  (glut:InitDisplayMode *display-mode*)
+  (glut:InitWindowSize     (nth *window-resolution* 0) (nth *window-resolution* 1))
+  (glut:InitWindowPosition (nth *window-position*   0) (nth *window-position*   1))
   (glut:CreateWindow *window-title*)
   (init)
   (glut:DisplayFunc display)
@@ -112,4 +112,5 @@
   (glut:MainLoop)
   (post-main-hook))
 
+(print "Stepping into main function...")
 (main)

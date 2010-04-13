@@ -6,6 +6,7 @@
 (define *window-position* '(100 100))
 (define *clear-color* '(1 1 1 0))
 (define *clear-depth* 1.0)
+(define *display-mode* (+ glut:DOUBLE glut:RGBA glut:DEPTH))
 
 (define *ignore-key-repeat* #t)
 

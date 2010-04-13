@@ -3,6 +3,12 @@
   (body)
   (gl:End))
 
+(define (translate . args)
+  (apply gl:Translatef args))
+
+(define (rotate . args)
+  (apply gl:Rotatef args))
+
 ;; (define (vertex? item)
 ;;   (if (and (equal? (length item) 3)
 
@@ -226,12 +232,17 @@
   
 
 ;; Matrix utils
-(define-syntax with-new-matrix
+(define-syntax with-new-matrix-m
   (syntax-rules () ((_ body ...)
                     (begin
                       (gl:PushMatrix)
                       body ...
                       (gl:PopMatrix)))))
+
+(define (with-new-matrix f)
+  (gl:PushMatrix)
+  (f)
+  (gl:PopMatrix))
 
 (define (bottomless-cube top-texture
                          side-texture
