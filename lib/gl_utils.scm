@@ -232,13 +232,6 @@
   
 
 ;; Matrix utils
-(define-syntax with-new-matrix-m
-  (syntax-rules () ((_ body ...)
-                    (begin
-                      (gl:PushMatrix)
-                      body ...
-                      (gl:PopMatrix)))))
-
 (define (with-new-matrix f)
   (gl:PushMatrix)
   (f)
