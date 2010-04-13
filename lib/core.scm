@@ -52,13 +52,13 @@
 
 (define (init)
   (gl:ShadeModel gl:SMOOTH)
-  (apply gl:ClearColor *clear-color*)
   (gl:ClearDepth *clear-depth*)
   (gl:Enable gl:DEPTH_TEST)
   (gl:DepthFunc gl:LEQUAL)
   (gl:Enable gl:BLEND)
   (gl:BlendFunc gl:SRC_ALPHA gl:ONE_MINUS_SRC_ALPHA)
   (gl:Hint gl:PERSPECTIVE_CORRECTION_HINT gl:NICEST)
+  (apply gl:ClearColor *clear-color*)
   (load-textures *texture-files* 'bmp))
 
 (define (display)
@@ -69,6 +69,7 @@
   (let ((delta (- *last-frame* (current-milliseconds))))
     (game-loop delta))
   (gl:Flush)
+  (glut:SwapBuffers)
   (set! *last-frame* (current-milliseconds))
   (post-display-hook))
 
@@ -90,7 +91,7 @@
   (glut:TimerFunc 0 render-loop 0))
 
 (define (main)
-  (glut:InitDisplayMode (+ glut:RGBA glut:DEPTH))
+  (glut:InitDisplayMode (+ glut:DOUBLE glut:RGBA glut:DEPTH))
   (glut:InitWindowSize (nth *window-resolution* 0) (nth *window-resolution* 1))
   (glut:InitWindowPosition (nth *window-position* 0) (nth *window-position* 1))
   (glut:CreateWindow *window-title*)
