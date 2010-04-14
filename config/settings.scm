@@ -13,3 +13,5 @@
 (define *shade-model* gl:SMOOTH)
 
 (define *texture-files* '("resources/grid.bmp" "resources/corner_test.bmp" "resources/example.bmp"))
+
+(define *default-debug-function* print)

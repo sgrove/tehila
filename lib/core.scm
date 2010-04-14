@@ -2,6 +2,7 @@
 (require-extension gl)
 (require-extension glu)
 (require-extension glut)
+(require-extension srfi-2)
 (require-extension srfi-4)
 
 ;; Hooks. Load early so they can be overridden anywhere
@@ -15,6 +16,9 @@
 (define (post-render-hook) '())
 (define (pre-display-hook) '())
 (define (post-display-hook) '())
+
+;; Defaults that can be overridden anywhere
+(define *default-debug-function* #f)
 
 ;; General helpers
 (load "lib/exceptions.scm")

@@ -26,7 +26,8 @@
 (define (turn-camera rotation)
   ;(print "Turning camera!")
   ;(print (vertex->string rotation))
-  (set! camera-rotation (map (lambda (a b) (+ a b)) camera-rotation rotation)))
+  (set! camera-rotation (map (lambda (a b) (+ a b)) camera-rotation rotation))
+  (update-camera 1))
 
 ;; TODO: Currently 2d. Make it 3d
 (define (camera-look-at position)
@@ -79,7 +80,8 @@
     (turn-camera (vertex 0 (- 90 (vertex-y rotation)) 0))))
 
 (define (move-camera delta)
-  (set! camera-velocity (map (lambda (a b) (+ a b)) camera-velocity delta)))
+  (set! camera-velocity (map (lambda (a b) (+ a b)) camera-velocity delta))
+  (update-camera 1))
 
 (define (move-camera-forward distance)
   (let* ((angle-y (+ 270 (vertex-y camera-angle)))
@@ -115,9 +117,10 @@
   (reset-camera-position)
   (reset-camera-angle))
 
-(define (camera-debug debug-function)
-  (let ((orbit-center (get-orbit-center 10)))
-    (map debug-function (list (string-append "POSITION: " (number->string (vertex-x camera-position)) ", " (number->string (vertex-y camera-position)) ", " (number->string (vertex-z camera-position)))
+(define (camera-debug #!optional debug-function)
+  (let ((f (or debug-function *default-debug-function* print))
+        (orbit-center (get-orbit-center 10)))
+    (map f (list (string-append "POSITION: " (number->string (vertex-x camera-position)) ", " (number->string (vertex-y camera-position)) ", " (number->string (vertex-z camera-position)))
                               (string-append "VELOCITY: " (number->string (vertex-x camera-velocity)) ", " (number->string (vertex-y camera-velocity)) ", " (number->string (vertex-z camera-velocity)))
                               (string-append "ANGLE: "    (number->string (vertex-x camera-angle))    ", " (number->string (vertex-y camera-angle))    ", " (number->string (vertex-z camera-angle)))
                               (string-append "ROTATION: " (number->string (vertex-x camera-rotation)) ", " (number->string (vertex-y camera-rotation)) ", " (number->string (vertex-z camera-rotation)))
@@ -132,7 +135,7 @@
 
 
 (define (adjust-for-camera)
-  (camera-debug print)
+  ;(camera-debug print)
     ;(gl:Translated (vertex-x orbit-center) (vertex-y orbit-center) (vertex-z orbit-center))
     ;(gl:Rotated (vertex-y camera-orbit-angle) 0 1 0)
     ;(gl:Translated (- (vertex-x orbit-center)) (- (vertex-y orbit-center)) (- (vertex-z orbit-center))))
