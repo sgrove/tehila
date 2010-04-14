@@ -11,11 +11,19 @@ You'll need the following [eggs](http://chicken.wiki.br/eggs):
 [opengl](http://chicken.wiki.br/opengl)  
 [glut](http://chicken.wiki.br/eggref/4/glut)  
 
-Usage
------
-Check out the examples directory, or "csi launcher.scm"
+Installation & Usage
+--------------------
+To install, first install chicken scheme, and then:
 
-Beware that you will need the bitmap (bmp) files in resources/ currently. There are only a few, but they're there.
+    sudo chicken-install opengl
+    sudo chicken-install glut
+    git clone git://github.com/sgrove/tehila.git
+
+That's it! Tehila is setup with all its dependencies. Now edit launcher.scheme to pick an example to run, then
+
+    csi launcher.scm
+
+And you should see your chosen example appear. For all the examples available, check out the examples directory, or "csi launcher.scm"
 
 Tutorials
 ---------
