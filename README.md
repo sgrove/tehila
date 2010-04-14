@@ -11,11 +11,6 @@ You'll need the following [eggs](http://chicken.wiki.br/eggs):
 [opengl](http://chicken.wiki.br/opengl)  
 [glut](http://chicken.wiki.br/eggref/4/glut)  
 
-And the following extensions (don't worry, **they should be included by default**):  
-lolevel  
-[srfi-1](http://srfi.schemers.org/srfi-1/srfi-1.html)  
-[srfi-4](http://srfi.schemers.org/srfi-4/srfi-4.html)  
-
 Usage
 -----
 Check out the examples directory, or "csi launcher.scm"
