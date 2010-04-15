@@ -19,11 +19,17 @@ To install, first install chicken scheme, and then:
     sudo chicken-install glut
     git clone git://github.com/sgrove/tehila.git
 
-That's it! Tehila is setup with all its dependencies. Now edit launcher.scheme to pick an example to run, then
+That's it! Tehila is setup with all its dependencies. 
+
+For general usage, pass your logic file to Tehila by:
+
+    csi launcher.scm <some-logic-file.scm>
+    
+If you omit any file, then the launcher will give you a menu to launch any file in the examples/ directory
 
     csi launcher.scm
 
-And you should see your chosen example appear. For all the examples available, check out the examples directory, or "csi launcher.scm"
+Choose one and you should the example appear.
 
 Tutorials
 ---------
