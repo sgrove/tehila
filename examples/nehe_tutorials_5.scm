@@ -94,6 +94,14 @@
                   (vertex  1 -1 -1)) ;; Bottom Left      
        ))))
 
-;; q for quit in this tutorial
 (define (handle-keyboard-state delta)
-  (if (kb:key-pressed? #\q) (exit)))
+    ;; bind keys to actions
+    (let* ((walk-length 0.01)
+           (key-map
+            `((#\q . ,(lambda () (exit))))))
+      
+      ;; execute actions for keys in *keyboard-state*
+      (for-each (lambda (key)
+                  (and-let* ((handler (alist-ref key key-map)))
+                            (handler)))
+                *keyboard-state*)))
