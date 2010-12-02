@@ -38,8 +38,8 @@
 ;; User settings
 (load "config/settings.scm")
 
-(if *debug-mode*
-    (load "lib/gl_debug_utils.scm"))
+;(if *debug-mode*
+    (load "lib/gl_debug_utils.scm");)
 
 (print "All helpers loaded")
 (print "Loading custom logic...")
@@ -77,12 +77,19 @@
   (set! *last-frame* (current-milliseconds))
   (post-display-hook))
 
+(define (gluPerspective fovy aspect z-min z-max)
+  (let* ((y-max (* z-min (tan (/ (* fovy 3.14159265) 360.0))))
+         (y-min (- y-max))
+         (x-min (* y-min aspect))
+         (x-max (* y-max aspect)))
+         (gl:Frustum x-min x-max y-min y-max z-min z-max)))
+
 (define (reshape width height)
   (pre-reshape-hook)
   (gl:Viewport 0 0 width height)
   (gl:MatrixMode gl:PROJECTION)
   (gl:LoadIdentity)
-  (glu:Perspective 60.0 (/ width height) 1.0 300.0)
+  (gluPerspective 60.0 (/ width height) 1.0 300.0)
   (gl:MatrixMode gl:MODELVIEW)
   (gl:LoadIdentity)
   (post-reshape-hook))
