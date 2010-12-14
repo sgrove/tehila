@@ -123,37 +123,37 @@
 (define (thick-triangle triangle-color
                         x y s)
                                         ; front face
-  (flat-triangle (color triangle-color)
+  (flat-triangle (apply color triangle-color)
                  (vector (+ (- (/ s 2)) x) y 0)
                  (vector x (+ y s) 0)
                  (vector (+ (/ s 2) x) y 0))
                                         ;undersides
-  (flat-triangle (color triangle-color)
+  (flat-triangle (apply color triangle-color)
                  (vector (+ (- (/ s 2)) x) y 0)
                  (vector (+ (- (/ s 2)) x) y 0.25)
                  (vector (+ (/ s 2) x) y 0))
 
-  (flat-triangle (color triangle-color)
+  (flat-triangle (apply color triangle-color)
                  (vector (+ (- (/ s 2)) x) y 0.25)
                  (vector (+ (/ s 2) x) y 0.25)
                  (vector (+ (/ s 2) x) y 0.0))
 
                                         ;side-1
-  (flat-triangle (color triangle-color)
+  (flat-triangle (apply color triangle-color)
                  (vector (+ (- (/ s 2)) x) y 0)
                  (vector (+ (- (/ s 2)) x) y 0.25)
                  (vector x (+ y s) 0.25))
-  (flat-triangle (color triangle-color)
+  (flat-triangle (apply color triangle-color)
                  (vector (+ (- (/ s 2)) x) y 0)
                  (vector x (+ y s) 0)
                  (vector x (+ y s) 0.25))
   
                                         ;side-2
-  (flat-triangle (color triangle-color)
+  (flat-triangle (apply color triangle-color)
                  (vector (+ (/ s 2) x) y 0)
                  (vector (+ (/ s 2) x) y 0.25)
                  (vector x (+ y s) 0.25))
-  (flat-triangle (color triangle-color)
+  (flat-triangle (apply color triangle-color)
                  (vector (+ (/ s 2) x) y 0)
                  (vector x (+ y s) 0)
                  (vector x (+ y s) 0.25)))
@@ -244,7 +244,7 @@
                          #!optional flip-texture)
   (set! *cube-debugger* (/ (- (current-milliseconds) *start-time*) 100000))
 
-  (with-new-matrix
+  (with-new-matrix (lambda ()
    (gl:Translated (vertex-x position) (vertex-y position) (vertex-z position))
    (textured-quad top-texture
                   (vertex 0 1 1)
@@ -280,5 +280,5 @@
                   (vertex 1 1 0)
                   (vertex 1 1 1)
                   (vertex 1 0 1)
-                  (vertex 1 0 0))))
+                  (vertex 1 0 0)))))
 
